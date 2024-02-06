@@ -1,16 +1,21 @@
 <script setup>
 import {computed} from 'vue'
 import { RouterLink, useRoute } from 'vue-router';
-
+import {useBebidasStore} from '../stores/bebidas'
 
 const route = useRoute ()
-
+const store = useBebidasStore()
 const paginaInicio= computed(() => route.name === 'inicio')
+
+const handleSubmit = ()=>{
+    store.obtenerRecetas()
+}
 </script>
 
 <template>
     <header
         class="bg-slate-800"
+        :class="{header: paginaInicio}"
     >
         <div class="mx-auto container px-5 py-16">
             <div class="flex justify-between items-center">
@@ -41,7 +46,8 @@ const paginaInicio= computed(() => route.name === 'inicio')
 
             <form action=""
             class="md:w-1/2 2x1:w-1/3 bg-orange-400 my-32 p-10 rounded-lg shadow space-y-6"
-            v-if="paginaInicio">
+            v-if="paginaInicio"
+            @submit.prevent="handleSubmit">
                 <div class="space-y-4">
                     <label 
                         class="block text-white uppercase font-extrabold text-lg"
@@ -52,18 +58,26 @@ const paginaInicio= computed(() => route.name === 'inicio')
                         id="ingrediente"
                         class="p-3 w-full rounded-lg focus:outline-none"
                         placeholder="Nombre o Ingredientes: Vodka, tequila, etc"
+                        v-model="store.busqueda.nombre"
                     >
                 </div>
                 <div class="space-y-4">
                     <label 
                         class="block text-white uppercase font-extrabold text-lg"
-                    for="categoria">Categoría</label>
+                    for="categoria"
+                    >Categoría</label>
                     <select
                         name="" 
                         id="categoria"
                         class="p-3 w-full rounded-lg focus:outline-none"
+                        v-model="store.busqueda.categoria"
                     >
                         <option value="">-- Seleccione --</option>
+                        <option
+                            v-for="categoria in store.categorias"
+                            :key="categoria.strCategory"
+                            :value="categoria.strCategory"
+                        >{{ categoria.strCategory }}</option>
                     </select>
                 </div>
                 <input 
@@ -75,5 +89,12 @@ const paginaInicio= computed(() => route.name === 'inicio')
         </div>
     </header>
 </template>
+<style>
+    .header{
+        background-image: url('/img/bg.jpg');
+        background-size: cover;
+        background-position: center;
+    }
+</style>
 
 
