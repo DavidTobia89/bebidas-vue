@@ -1,9 +1,11 @@
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useBebidasStore } from './bebidas';
+import { useModalStore } from './modal';
 export const useFavoritosStore = defineStore('favoritos', () => {
 
     const bebidas = useBebidasStore()
+    const modal = useModalStore()
     const favoritos = ref([])
 
     watch(favoritos, () => {
@@ -17,20 +19,35 @@ export const useFavoritosStore = defineStore('favoritos', () => {
     function sincronizarLocalStorage() {
         localStorage.setItem('favoritos', JSON.stringify(favoritos.value))
     }
-    function existeFavorito(id) {
+    function existeFavorito() {
         const favoritosLocalStorage = JSON.parse(localStorage.getItem('favoritos')) ?? []
-        return favoritosLocalStorage.some(favorito => favorito.idDrink === id)
+        return favoritosLocalStorage.some(favorito => favorito.idDrink === bebidas.receta.idDrink )
     }
-    function handleClickFavorito() {
-        if (existeFavorito(bebidas.receta.idDrink )){
-
-        } else {
-            favoritos.value.push(bebidas.receta)
-        }
+    function agregarFavoritoFavorito () {
         
+        favoritos.value.push(bebidas.receta)
     }
+    function eliminarFavorito () {
+        
+        return favoritos.value = favoritos.value.filter(favorito => favorito.idDrink !== bebidas.receta.idDrink )
+    }
+
+    function handleClickFavorito() {
+        if (existeFavorito()){
+            eliminarFavorito ()
+          
+        } else {
+            agregarFavoritoFavorito ()
+          
+        }
+        modal.handleClickModal() 
+    }
+
+    const noFavoritos = computed(()=>favoritos.value.length === 0)
     return {
         favoritos,
-        handleClickFavorito, existeFavorito
+        handleClickFavorito, 
+        existeFavorito,
+        noFavoritos
     }
 })
