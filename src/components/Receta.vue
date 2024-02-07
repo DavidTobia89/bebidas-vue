@@ -1,10 +1,14 @@
 <script setup>
+import { useBebidasStore } from '../stores/bebidas';
 defineProps({
     receta: {
         type: Object
     },
     
 })
+
+
+const bebidas = useBebidasStore()
 </script>
 
 <template>
@@ -17,6 +21,7 @@ defineProps({
             <button 
                 type="button"
                 class="bg-orange-400 hover:bg-orange-500 mt-5 w-full p-3 font-bold text-white text-lg"
+                @click="bebidas.seleccionarBebida(receta.idDrink)"
             >
                 Ver Receta
             </button>
