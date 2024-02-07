@@ -14,14 +14,23 @@ export const useFavoritosStore = defineStore('favoritos', () => {
     onMounted(() => {
         favoritos.value = JSON.parse(localStorage.getItem('favoritos')) ?? []
     })
-    const sincronizarLocalStorage = () => {
+    function sincronizarLocalStorage() {
         localStorage.setItem('favoritos', JSON.stringify(favoritos.value))
     }
+    function existeFavorito(id) {
+        const favoritosLocalStorage = JSON.parse(localStorage.getItem('favoritos')) ?? []
+        return favoritosLocalStorage.some(favorito => favorito.idDrink === id)
+    }
     function handleClickFavorito() {
-        favoritos.value.push(bebidas.receta)
+        if (existeFavorito(bebidas.receta.idDrink )){
+
+        } else {
+            favoritos.value.push(bebidas.receta)
+        }
+        
     }
     return {
         favoritos,
-        handleClickFavorito
+        handleClickFavorito, existeFavorito
     }
 })
